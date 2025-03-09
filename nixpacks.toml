@@ -2,4 +2,4 @@
 
 [start]
 
-cmd = "gunicorn app:app"
+cmd = "gunicorn main:app"
