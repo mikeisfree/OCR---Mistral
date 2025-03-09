@@ -131,11 +131,21 @@ def api_json():
 def test_endpoint():
     return jsonify({"status": "success", "message": "API is working"})
 
+# if __name__ == '__main__':
+#     # Print all registered routes for debugging
+#     print("Registered routes:")
+#     for rule in app.url_map.iter_rules():
+#         print(f"{rule.endpoint}: {rule.rule}")
+    
+#     # Run the app
+#     app.run(debug=True)
+
 if __name__ == '__main__':
     # Print all registered routes for debugging
     print("Registered routes:")
     for rule in app.url_map.iter_rules():
         print(f"{rule.endpoint}: {rule.rule}")
     
-    # Run the app
-    app.run(debug=True)
+    # Run the app - configure for both local development and production
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)
