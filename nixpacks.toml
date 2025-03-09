@@ -1,0 +1,3 @@
+[start]
+
+CMD = "gunicorn app:app"

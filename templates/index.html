@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCR Processor</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background-color: #111;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            width: 80%;
+            max-width: 600px;
+        }
+
+        h1 {
+            margin-bottom: 2rem;
+        }
+
+        input[type="url"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 1rem;
+            background-color: #222;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 5px;
+        }
+
+        .radio-group {
+            margin: 1rem 0;
+        }
+
+        .radio-group label {
+            margin: 0 1rem;
+            cursor: pointer;
+        }
+
+        button {
+            background-color: #444;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #666;
+        }
+
+        #result {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 5px;
+        }
+
+        .success {
+            background-color: #1a472a;
+        }
+
+        .error {
+            background-color: #4a1515;
+        }
+
+        .api-info {
+            margin-top: 2rem;
+            text-align: left;
+            background-color: #222;
+            padding: 1rem;
+            border-radius: 5px;
+        }
+
+        .api-info h2 {
+            margin-top: 0;
+        }
+
+        code {
+            display: block;
+            background-color: #333;
+            padding: 0.5rem;
+            border-radius: 3px;
+            margin: 0.5rem 0;
+            overflow-x: auto;
+            color: #f8f8f8;
+        }
+
+        .loading {
+            display: none;
+            margin: 1rem auto;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #fff;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PDF OCR Processor</h1>
+        <form id="ocrForm">
+            <input type="url" id="url" name="url" placeholder="Enter PDF URL" required>
+            <div class="radio-group">
+                <label>
+                    <input type="radio" name="format" value="json" checked> JSON
+                </label>
+                <label>
+                    <input type="radio" name="format" value="markdown"> Markdown
+                </label>
+            </div>
+            <button type="submit">Process OCR</button>
+        </form>
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Processing document, please wait...</p>
+        </div>
+        <div id="result" style="display: none;"></div>
+
+        <div class="api-info">
+            <h2>API Endpoints</h2>
+            <p>Use these endpoints to directly access OCR functionality:</p>
+            
+            <h3>Markdown Output</h3>
+            <code>GET /api/markdown?url=https://example.com/document.pdf</code>
+            
+            <h3>JSON Output</h3>
+            <code>GET /api/json?url=https://example.com/document.pdf</code>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('ocrForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const resultDiv = document.getElementById('result');
+            const loadingDiv = document.getElementById('loading');
+            
+            // Show loading indicator
+            loadingDiv.style.display = 'block';
+            resultDiv.style.display = 'none';
+            
+            try {
+                const response = await fetch('/process_ocr', {
+                    method: 'POST',
+                    body: new FormData(form)
+                });
+                
+                const data = await response.json();
+                resultDiv.textContent = data.message;
+                resultDiv.className = data.status === 'success' ? 'success' : 'error';
+            } catch (error) {
+                resultDiv.textContent = 'An error occurred while processing the request.';
+                resultDiv.className = 'error';
+            } finally {
+                // Hide loading indicator and show result
+                loadingDiv.style.display = 'none';
+                resultDiv.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
