@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify, Response
 import os
 import json
 import time
-from mistralai import Mistral
+from mistralai.client import MistralClient  # Updated 
 import traceback
 import logging
 
